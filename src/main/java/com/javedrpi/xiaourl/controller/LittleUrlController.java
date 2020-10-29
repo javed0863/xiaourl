@@ -33,29 +33,23 @@ public class LittleUrlController {
     @Autowired
     private UrlService urlService;
 
-    @GetMapping("/xiao")
-    public ResponseEntity<UrlsDto> xiaoUrl(@RequestParam("url") final String url,
-                                           HttpServletRequest request){
-        String baseurl = getBaseShortUrl(request);
+    @Value("${xiao.url.base}")
+    private String BASE_XIAOURL;
 
+    @GetMapping("/xiao")
+    public ResponseEntity<UrlsDto> xiaoUrl(@RequestParam("url") final String url){
         String urlCode = uniqueRandomService.getUniqueRandom(getSeedvalue());
-        String shortenUrl = baseurl.concat(urlCode);
+        String shortenUrl = BASE_XIAOURL.concat(urlCode);
         Urls savedRecord = urlService.insertRecord(url, shortenUrl);
         UrlsDto urlsDto = new UrlsDto(savedRecord.getOriginalUrl(), savedRecord.getShortenUrl());
 
         return new ResponseEntity<>(urlsDto, HttpStatus.OK);
     }
 
-    private String getBaseShortUrl(HttpServletRequest request) {
-        String baseurl = request.getRequestURL().toString();
-        return baseurl.replace("xiao","lu/");
-    }
-
     @GetMapping("/lu/{urlcode}")
-    public RedirectView redirectToOriginal(@PathVariable("urlcode") final String urlcode,
-                                           HttpServletRequest request){
+    public RedirectView redirectToOriginal(@PathVariable("urlcode") final String urlcode){
         logger.info("redirecting...");
-        Urls savedRecord = urlService.findOriginalUrl(request.getRequestURL().toString());
+        Urls savedRecord = urlService.findOriginalUrl(BASE_XIAOURL.concat(urlcode));
         return new RedirectView(savedRecord.getOriginalUrl());
     }
 
