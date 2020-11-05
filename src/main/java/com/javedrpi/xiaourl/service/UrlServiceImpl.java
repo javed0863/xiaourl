@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import static com.javedrpi.xiaourl.utils.MyLogger.getMessage;
 

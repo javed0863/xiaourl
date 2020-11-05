@@ -1,5 +1,7 @@
 package com.javedrpi.xiaourl.controller;
 
+import com.javedrpi.xiaourl.exception.InvalidAuthTokenException;
+import com.javedrpi.xiaourl.exception.UserNotSubscribedException;
 import com.javedrpi.xiaourl.model.ShortUrlDto;
 import com.javedrpi.xiaourl.model.Urls;
 import com.javedrpi.xiaourl.model.UrlsDto;
@@ -14,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.Map;
-import java.util.Optional;
 
 import static com.javedrpi.xiaourl.utils.MyLogger.getMessage;
 
@@ -35,7 +34,8 @@ public class LittleUrlController {
     public ResponseEntity<UrlsDto> xiaoUrl(@RequestParam("url") final String originalUrl,
                                            HttpServletRequest request){
         if(originalUrl.length() > 100){
-            throw new RuntimeException("Please subscribe to access unlimited features");
+            throw new UserNotSubscribedException("Please subscribe to access unlimited features",
+                    request.getSession().getId());
         }
 
         return new ResponseEntity<>(
@@ -50,7 +50,8 @@ public class LittleUrlController {
                                           @RequestBody final ShortUrlDto shortUrlDto,
                                            HttpServletRequest request){
         if(!urlService.isValidClient(clientId, apiToken))
-            throw new RuntimeException("Not Authorized");
+            throw new InvalidAuthTokenException("Invalid client_id or api_token",
+                    request.getSession().getId());
 
         return new ResponseEntity<>(
                 urlService.getUrlsDtoResponse(shortUrlDto.getOriginalUrl(), request),
