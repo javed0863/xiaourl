@@ -7,7 +7,7 @@ Usage
 
 `GET https://www.javedrpi.com/shorturl?url=https://medium.com/big-data-engineering/hello-kafka-world-the-complete-guide-to-kafka-with-docker-and-python-f788e2588cfc` 
 
-* Need to add the client_id and api_token configured in DB to test below.
+* Need to add the client_id and api_token configured in DB to test below. This can be used to shorten url with length more than 100 characters.
 
 `curl --location --request POST 'https://www.javedrpi.com/shorty' \
 --header 'client_id: <SOME_VALUE>' \
